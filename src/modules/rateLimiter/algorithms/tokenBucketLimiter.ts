@@ -13,43 +13,19 @@ export default class TokenBucketLimiter {
     const tokensKey = `${key}:tokens`
     const lastRefillKey = `${key}:last_refill`
 
-    const now = Math.floor(Date.now() / 1000)
-
-    let tokens = await this.store.get(tokensKey)
-    let lastRefill = await this.store.get(lastRefillKey)
-
-    if (tokens === null || lastRefill === null) {
-
-      tokens = this.config.capacity
-      lastRefill = now
-
-    }
-
-    const elapsed = now - lastRefill
-    const refill = elapsed * this.config.refillRate
-
-    tokens = Math.min(
+    const result = await this.store.executeTokenBucket(
+      tokensKey,
+      lastRefillKey,
       this.config.capacity,
-      tokens + refill
+      this.config.refillRate
     )
 
-    if (tokens < 1) {
-
-      return {
-        allowed: false,
-        remaining: 0
-      }
-
-    }
-
-    tokens -= 1
-
-    await this.store.set(tokensKey, tokens, 60)
-    await this.store.set(lastRefillKey, now, 60)
+    const allowed = result[0] === 1
+    const remaining = result[1]
 
     return {
-      allowed: true,
-      remaining: tokens
+      allowed,
+      remaining
     }
 
   }

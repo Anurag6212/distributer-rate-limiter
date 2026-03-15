@@ -6,4 +6,11 @@ export interface RateLimitStore {
     get(key: string): Promise<number | null>
   
     set(key: string, value: number, expiry: number): Promise<void>
+
+    executeTokenBucket(
+      tokensKey: string,
+      lastRefillKey: string,
+      capacity: number,
+      refillRate: number
+    ): Promise<[number, number]>
   }

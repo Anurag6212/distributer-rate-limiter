@@ -31,3 +31,8 @@ export interface RateLimitPolicy {
 export interface RateLimiter {
   isAllowed(key: string): Promise<RateLimitResult>
 }
+
+
+export interface RedisScriptClient {
+  scriptLoad(script: string): Promise<string>
+}

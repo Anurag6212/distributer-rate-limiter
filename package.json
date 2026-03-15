@@ -6,10 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev1": "cross-env PORT=3001 ts-node-dev src/index.ts",
-    "dev2": "cross-env PORT=3002 ts-node-dev src/index.ts",
-    "dev3": "cross-env PORT=3003 ts-node-dev src/index.ts"
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
