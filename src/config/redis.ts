@@ -1,8 +1,9 @@
 import { createClient } from "redis";
+import { constants } from "../constants";
 
 export class RedisClient {
   private client = createClient({
-    url: "redis://localhost:6379",
+    url: constants.REDIS_URL,
   });
 
   constructor() {

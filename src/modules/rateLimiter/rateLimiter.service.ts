@@ -1,24 +1,16 @@
-import RedisStore from "./store/redisStore"
-import FixedWindowLimiter from "./algorithms/fixedWindowLimiter"
-import SlidingWindowCounterLimiter from "./algorithms/slidingWindowCounterLimiter"
+import LimiterFactory from "./rateLimiter.factory"
+import { RateLimitPolicy } from "./rateLimiter.types"
 
 export default class RateLimiterService {
-  private limiter
 
-  constructor() {
-    const store = new RedisStore()
+  private factory = new LimiterFactory()
 
-    const config = {
-      limit: 10,
-      window: 60
-    }
+  async check(key: string, policy: RateLimitPolicy) {
 
-    this.limiter = new SlidingWindowCounterLimiter(store, config)
+    const limiter = this.factory.create(policy)
 
-    // this.limiter = new FixedWindowLimiter(store, config)
+    return limiter.isAllowed(key)
+
   }
 
-  async check(key: string) {
-    return this.limiter.isAllowed(key)
-  }
 }

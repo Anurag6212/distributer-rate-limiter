@@ -1,13 +1,16 @@
 import { Request, Response, NextFunction } from "express"
 import RateLimiterService from "./rateLimiter.service"
+import { RateLimitPolicy } from "./rateLimiter.types"
 
-export default class RateLimiterMiddleware {
-  async handle(req: Request, res: Response, next: NextFunction) {
+const rateLimiterService = new RateLimiterService()
+
+export default function RateLimiterMiddleware(policy: RateLimitPolicy) {
+
+  return async function (req: Request, res: Response, next: NextFunction) {
+
     const key = `rate_limit:${req.ip}`
 
-    const rateLimiterService = new RateLimiterService();
-
-    const result = await rateLimiterService.check(key)
+    const result = await rateLimiterService.check(key, policy)
 
     if (!result.allowed) {
       return res.status(429).json({
@@ -16,5 +19,7 @@ export default class RateLimiterMiddleware {
     }
 
     next()
+
   }
+
 }

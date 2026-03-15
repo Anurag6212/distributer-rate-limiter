@@ -1,9 +1,13 @@
 import { Router, Request, Response } from "express"
-import RateLimiterMiddleware from "../rateLimiter/rateLimiter.middleware"
+import RateLimiterMiddleware from "../rateLimiter/rateLimiter.middleware";
 
 class DemoController {
   public router: Router
-  private rateLimiterMiddleware = new RateLimiterMiddleware();
+  private rateLimiterMiddleware = RateLimiterMiddleware({
+    algorithm: "token-bucket",
+    capacity: 10,
+    refillRate: 1
+  });
 
   constructor() {
     this.router = Router()
@@ -11,7 +15,7 @@ class DemoController {
   }
 
   private initializeRoutes() {
-    this.router.get("/", this.rateLimiterMiddleware.handle, this.test)
+    this.router.get("/", this.rateLimiterMiddleware, this.test)
   }
 
   private test(req: Request, res: Response) {

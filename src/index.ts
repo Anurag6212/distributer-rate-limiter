@@ -1,6 +1,10 @@
 import express from "express";
 import { redisClient } from "./config/redis";
 import DemoController from "./modules/demo/demo.controller";
+import { constants } from "./constants";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
@@ -13,8 +17,8 @@ async function start() {
 
   app.use("/demo", demoController.router);
 
-  app.listen(3000, () => {
-    console.log("Server running on port 3000");
+  app.listen(constants.PORT, () => {
+    console.log(`Server running on port ${constants.PORT}`);
   });
 }
 
