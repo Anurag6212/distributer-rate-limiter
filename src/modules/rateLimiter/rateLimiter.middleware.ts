@@ -8,9 +8,15 @@ export default function RateLimiterMiddleware(policy: RateLimitPolicy) {
 
   return async function (req: Request, res: Response, next: NextFunction) {
 
-    const key = `rate_limit:${req.ip}`
+    const ip = req.ip || req.socket.remoteAddress || "unknown"
+
+    const key = `rate_limit:${ip}`
 
     const result = await rateLimiterService.check(key, policy)
+
+    res.setHeader("X-RateLimit-Limit", policy.capacity?.toString() || "0")
+    res.setHeader("X-RateLimit-Remaining", result.remaining)
+    res.setHeader("X-Server-Instance", process.env.PORT || "unknown")
 
     if (!result.allowed) {
       return res.status(429).json({
